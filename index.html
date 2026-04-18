@@ -282,8 +282,8 @@
 <div class="main-content" id="main-content">
   <div class="view-toggle-bar">
     <div class="toggle-pill">
-      <button class="toggle-btn active" id="btn-daily" onclick="setView('daily')">Daily View</button>
-      <button class="toggle-btn"        id="btn-week"  onclick="setView('week')">Full Week</button>
+      <button class="toggle-btn"        id="btn-daily" onclick="setView('daily')">Daily View</button>
+      <button class="toggle-btn active" id="btn-week"  onclick="setView('week')">Full Week</button>
     </div>
   </div>
   <div class="tabs" id="tabs"></div>
@@ -378,7 +378,7 @@ const SECTIONS = [
 let schedule         = {};      // live data from GitHub
 let editState        = {};      // working copy during edit
 let activeDay        = "aug13";
-let activeView       = "daily";
+let activeView       = "week";
 let editMode         = false;
 let detailReturnView = "daily";
 let openSections     = {};
