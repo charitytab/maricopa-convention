@@ -122,9 +122,7 @@
     .section-chevron.open { transform: rotate(180deg); }
     .section-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
     .section-body.open { max-height: 700px; }
-    .section-body .role-table tr:last-child { border-bottom: 1px solid var(--border); }
-
-px solid #F5EDE0; }
+    .section-body .role-table tr:last-child { border-bottom: 1px solid #F5EDE0; }
     .section-body .role-table tr:nth-child(even) { background: #FDFAF5; }
 
     /* ─── WEEK VIEW ─── */
@@ -419,7 +417,7 @@ function updateFooters() {
 
 /* ══════════════════════════════════════════
    HELPERS
-═════════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 function getSchedule() { return editMode ? editState : schedule; }
 
 function val(data, role) {
@@ -741,4 +739,8 @@ async function saveChanges() {
 
 /* ══════════════════════════════════════════
    INIT
-════════════════════════════════
+══════════════════════════════════════════════════════════════════════════ */
+loadSchedule();
+</script>
+</body>
+</html>
