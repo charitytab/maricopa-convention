@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maricopa Valley Convention 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:       #1C0F05;
+      --brown:      #4A2C0A;
+      --gold:       #C8913A;
+      --gold-light: #E8B86D;
+      --sand:       #F5DEB3;
+      --cream:      #FDF6EC;
+      --text-dark:  #2C1A0A;
+      --text-light: #A07850;
+      --white:      #FFFFFF;
+      --border:     #EDE0C8;
+      --edit-blue:  #2563eb;
+    }
+
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--cream); min-height: 100vh; color: var(--text-dark); }
+
+    /* ─── HEADER ─── */
+    .header {
+      position: relative; width: 100%; min-height: 200px;
+      background-image: url('convention_banner.jpg');
+      background-size: cover; background-position: center 30%;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .header::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg,#1C0F05 0%,#3D2008 30%,#7A4A10 55%,#C8913A 80%,#E8B86D 100%);
+      z-index: 0;
+    }
+    .header::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom,rgba(28,15,5,.55) 0%,rgba(28,15,5,.35) 50%,rgba(28,15,5,.7) 100%);
+      z-index: 1;
+    }
+    .header-content { position: relative; z-index: 2; padding: 32px 20px; }
+    .header h1 { font-size: clamp(22px,6vw,38px); font-weight: 300; letter-spacing: clamp(3px,2vw,10px); text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+    .header-date { font-size: clamp(12px,3vw,16px); letter-spacing: 3px; text-transform: uppercase; color: var(--sand); }
+    .header-divider { width: 50px; height: 1px; background: var(--gold-light); margin: 14px auto; opacity: .7; }
+
+    /* ─── EDIT MODE BANNER ─── */
+    .edit-banner {
+      display: none; background: var(--edit-blue); color: #fff;
+      text-align: center; padding: 10px; font-size: 13px; font-weight: 600;
+      letter-spacing: .5px; position: sticky; top: 0; z-index: 50;
+    }
+    .edit-banner.visible { display: block; }
+
+    /* ─── VIEW TOGGLE ─── */
+    .view-toggle-bar { background: var(--dark); display: flex; align-items: center; justify-content: center; padding: 10px 16px; }
+    .toggle-pill { display: flex; background: rgba(255,255,255,.08); border-radius: 30px; padding: 4px; gap: 2px; }
+    .toggle-btn { padding: 7px 20px; border: none; border-radius: 24px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; color: var(--text-light); background: transparent; }
+    .toggle-btn.active { background: var(--gold); color: var(--dark); }
+    .toggle-btn:not(.active):hover { color: var(--gold-light); }
+
+    /* ─── DAY TABS ─── */
+    .tabs { background: rgba(28,15,5,.97); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; position: sticky; top: 0; z-index: 20; scrollbar-width: none; border-bottom: 1px solid rgba(200,145,58,.2); }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { flex: 1; min-width: 80px; padding: 13px 6px; border: none; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; text-align: center; transition: all .2s; color: var(--text-light); }
+    .tab-btn:hover { background: rgba(200,145,58,.1); }
+    .tab-btn.active { border-bottom: 3px solid var(--gold); background: rgba(200,145,58,.15); color: var(--gold-light); }
+    .tab-day  { font-weight: 700; font-size: 13px; }
+    .tab-date { font-size: 10px; margin-top: 2px; opacity: .7; }
+
+    /* ─── CARDS ─── */
+    .cards-wrapper { max-width: 900px; margin: 24px auto; padding: 0 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width:600px) { .cards-wrapper { grid-template-columns: 1fr; gap: 14px; margin: 16px auto; } }
+
+    .card { background: var(--white); border-radius: 14px; box-shadow: 0 2px 12px rgba(74,44,10,.10); overflow: hidden; border: 1px solid var(--border); }
+    .card-top-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity .15s; }
+    .card-top-header:hover { opacity: .85; }
+    .card-header-left { display: flex; align-items: center; gap: 10px; }
+    .card.morning .card-top-header { background: linear-gradient(90deg,#FFF8EE,#FDF3E0); border-left: 4px solid #E8913A; }
+    .card.evening .card-top-header { background: linear-gradient(90deg,#F5EDE0,#EDE0C8); border-left: 4px solid #7A4A10; }
+    .badge { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 20px; padding: 4px 12px; color: #fff; }
+    .badge.morning { background: #E8913A; }
+    .badge.evening { background: #7A4A10; }
+    .service-label { font-size: 13px; color: var(--text-light); }
+    .expand-hint   { font-size: 11px; color: var(--gold); opacity: .8; white-space: nowrap; }
+
+    /* ─── ROLE TABLE ─── */
+    .role-table { width: 100%; border-collapse: collapse; }
+    .role-table tr { border-bottom: 1px solid #F5EDE0; }
+    .role-table tr:last-child { border-bottom: none; }
+    .role-table td { padding: 10px 18px; font-size: 14px; }
+    .role-table td.role-name { color: var(--text-light); font-weight: 500; width: 45%; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .role-table td.person-name { font-weight: 600; color: var(--text-dark); }
+    .role-table td.person-name.tbd { color: #D4C4A8; font-style: italic; font-weight: 400; }
+    @media (max-width:600px) {
+      .role-table tr:nth-child(even) { background: #FDFAF5; }
+      .role-table td { padding: 11px 14px; }
+      .role-table td.role-name { font-size: 11px; }
+      .role-table td.person-name { font-size: 13px; }
+    }
+
+    /* ─── EDIT INPUTS ─── */
+    .edit-input {
+      width: 100%; border: 1px solid #93c5fd; border-radius: 6px;
+      padding: 5px 8px; font-size: 13px; font-family: inherit;
+      color: var(--text-dark); background: #eff6ff;
+      outline: none; transition: border .15s;
+    }
+    .edit-input:focus { border-color: var(--edit-blue); background: #fff; }
+
+    /* ─── SECTIONS ─── */
+    .sections-wrapper { border-top: 2px solid var(--border); }
+    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer; border-bottom: 1px solid var(--border); background: #FAF3E8; transition: background .15s; user-select: none; }
+    .section-header:hover { background: #F5EAD8; }
+    .section-header-left { display: flex; align-items: center; gap: 8px; }
+    .section-icon  { font-size: 14px; }
+    .section-label { font-size: 12px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--brown); }
+    .section-count { font-size: 10px; color: var(--text-light); background: var(--border); border-radius: 10px; padding: 1px 7px; }
+    .section-chevron { font-size: 11px; color: var(--text-light); transition: transform .25s; display: inline-block; }
+    .section-chevron.open { transform: rotate(180deg); }
+    .section-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .section-body.open { max-height: 700px; }
+    .section-body .role-table tr:last-child { border-bottom: 1px solid #F5EDE0; }
+    .section-body .role-table tr:nth-child(even) { background: #FDFAF5; }
+
+    /* ─── WEEK VIEW ─── */
+    .week-wrapper { max-width: 960px; margin: 24px auto 36px; padding: 0 14px; display: flex; flex-direction: column; gap: 20px; }
+    .week-day-card { background: var(--white); border-radius: 14px; box-shadow: 0 2px 12px rgba(74,44,10,.09); border: 1px solid var(--border); overflow: hidden; }
+    .week-day-header { background: linear-gradient(90deg,var(--dark),var(--brown)); padding: 12px 20px; display: flex; align-items: baseline; gap: 10px; }
+    .week-day-name { font-size: 15px; font-weight: 700; color: var(--gold-light); letter-spacing: 1px; }
+    .week-day-date { font-size: 12px; color: var(--sand); opacity: .7; }
+    .week-table { width: 100%; border-collapse: collapse; }
+    .week-table thead tr { background: #FAF3E8; border-bottom: 2px solid var(--border); }
+    .week-table thead th { padding: 9px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-light); text-align: left; }
+    .week-table thead th:first-child { width: 110px; }
+    .week-table tbody tr { border-bottom: 1px solid #F5EDE0; cursor: pointer; transition: background .15s; }
+    .week-table tbody tr:last-child { border-bottom: none; }
+    .week-table tbody tr:hover { background: #FFF8EE; }
+    .week-table td { padding: 12px 14px; font-size: 13px; vertical-align: middle; }
+    .week-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; border-radius: 16px; padding: 3px 10px; color: #fff; }
+    .week-badge.morning { background: #E8913A; }
+    .week-badge.evening { background: #7A4A10; }
+    .week-person { font-weight: 600; color: var(--text-dark); }
+    .week-person.tbd { color: #D4C4A8; font-style: italic; font-weight: 400; }
+    .week-expand-hint { font-size: 11px; color: var(--gold); opacity: 0; transition: opacity .15s; white-space: nowrap; }
+    .week-table tbody tr:hover .week-expand-hint { opacity: 1; }
+    @media (max-width:560px) {
+      .week-table thead th:nth-child(4), .week-table td:nth-child(4) { display: none; }
+      .week-table td { padding: 10px 10px; font-size: 12px; }
+      .week-table thead th { padding: 8px 10px; }
+    }
+
+    /* ─── DETAIL VIEW ─── */
+    #detail-view { display: none; }
+    #detail-view.visible { display: block; }
+    .main-content.hidden { display: none; }
+
+    .detail-back-bar { background: var(--dark); padding: 12px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 30; }
+    .back-btn { background: rgba(200,145,58,.2); border: 1px solid var(--gold); color: var(--gold-light); font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s; }
+    .back-btn:hover { background: rgba(200,145,58,.35); }
+    .detail-back-label { color: var(--text-light); font-size: 13px; }
+
+    .detail-hero { padding: 28px 20px 20px; text-align: center; max-width: 700px; margin: 0 auto; }
+    .detail-hero .detail-day { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .detail-hero .detail-title { font-size: clamp(20px,5vw,30px); font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+    .detail-hero .detail-subtitle { font-size: 13px; color: var(--text-light); }
+    .detail-divider { width: 40px; height: 2px; background: var(--gold); margin: 12px auto 0; border-radius: 2px; }
+
+    .detail-card { max-width: 600px; margin: 0 auto 100px; padding: 0 14px; }
+    .detail-card .role-table td { padding: 14px 20px; font-size: 15px; }
+    .detail-card .role-table td.role-name { font-size: 12px; }
+    .detail-card-inner { background: var(--white); border-radius: 16px; box-shadow: 0 4px 20px rgba(74,44,10,.12); border: 1px solid var(--border); overflow: hidden; }
+    .detail-card-inner.morning { border-top: 5px solid #E8913A; }
+    .detail-card-inner.evening { border-top: 5px solid #7A4A10; }
+    .detail-card-inner .section-body { max-height: none; overflow: visible; }
+    .detail-card-inner .section-chevron { display: none; }
+    .detail-card-inner .section-header { cursor: default; }
+
+    /* ─── FLOATING EDIT BUTTON ─── */
+    .fab {
+      position: fixed; bottom: 24px; right: 20px; z-index: 100;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--dark); border: 2px solid var(--gold);
+      color: var(--gold-light); font-size: 20px;
+      cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.35);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, background .15s;
+    }
+    .fab:hover { transform: scale(1.1); background: var(--brown); }
+    .fab.editing { background: var(--edit-blue); border-color: #93c5fd; }
+
+    /* ─── SAVE BAR ─── */
+    .save-bar {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+      background: var(--dark); border-top: 2px solid var(--gold);
+      padding: 12px 20px; gap: 12px;
+      flex-direction: row; align-items: center; justify-content: center;
+    }
+    .save-bar.visible { display: flex; }
+    .save-btn {
+      padding: 11px 28px; border: none; border-radius: 24px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .save-btn.confirm { background: var(--edit-blue); color: #fff; }
+    .save-btn.confirm:hover { background: #1d4ed8; }
+    .save-btn.cancel  { background: rgba(255,255,255,.1); color: var(--sand); border: 1px solid rgba(255,255,255,.2); }
+    .save-btn.cancel:hover  { background: rgba(255,255,255,.2); }
+    .save-status { font-size: 12px; color: var(--gold-light); }
+
+    /* ─── PIN MODAL ─── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.6); align-items: center; justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 18px;
+      padding: 32px 28px; width: 320px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4); text-align: center;
+    }
+    .modal h3 { font-size: 18px; color: var(--text-dark); margin-bottom: 6px; }
+    .modal p  { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+    .pin-input {
+      width: 100%; padding: 12px; border: 2px solid var(--border);
+      border-radius: 10px; font-size: 22px; text-align: center;
+      letter-spacing: 8px; font-family: monospace; outline: none;
+      color: var(--text-dark); transition: border .15s;
+    }
+    .pin-input:focus { border-color: var(--gold); }
+    .pin-input.error { border-color: #ef4444; animation: shake .3s; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+    }
+    .pin-error { color: #ef4444; font-size: 12px; margin-top: 8px; min-height: 18px; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-btn { flex: 1; padding: 11px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+    .modal-btn.primary { background: var(--gold); color: var(--dark); }
+    .modal-btn.primary:hover { background: var(--gold-light); }
+    .modal-btn.secondary { background: #f3f4f6; color: #6b7280; }
+    .modal-btn.secondary:hover { background: #e5e7eb; }
+
+    /* ─── LOADING ─── */
+    .loading-screen {
+      position: fixed; inset: 0; background: var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 300; flex-direction: column; gap: 14px;
+    }
+    .loading-screen.hidden { display: none; }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-screen p { color: var(--text-light); font-size: 13px; }
+
+    /* ─── FOOTER ─── */
+    .footer { text-align: center; font-size: 11px; color: var(--text-light); padding: 20px 0 80px; letter-spacing: .5px; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loading-screen">
+  <div class="spinner"></div>
+  <p>Loading schedule…</p>
+</div>
+
+<!-- Edit Mode Banner -->
+<div class="edit-banner" id="edit-banner">✏️ Edit Mode Active — make your changes then tap Save</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-content">
+    <h1>Maricopa Valley</h1>
+    <div class="header-divider"></div>
+    <p class="header-date">August 2026</p>
+  </div>
+</div>
+
+<!-- ══ MAIN CONTENT ══ -->
+<div class="main-content" id="main-content">
+  <div class="view-toggle-bar">
+    <div class="toggle-pill">
+      <button class="toggle-btn active" id="btn-daily" onclick="setView('daily')">Daily View</button>
+      <button class="toggle-btn"        id="btn-week"  onclick="setView('week')">Full Week</button>
+    </div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div id="daily-section">
+    <div class="cards-wrapper" id="cards"></div>
+    <div class="footer" id="footer-daily"></div>
+  </div>
+  <div id="week-section" class="hidden">
+    <div class="week-wrapper" id="week-content"></div>
+    <div class="footer" id="footer-week"></div>
+  </div>
+</div>
+
+<!-- ══ DETAIL VIEW ══ -->
+<div id="detail-view">
+  <div class="detail-back-bar">
+    <button class="back-btn" onclick="closeDetail()">&#8592; Back</button>
+    <span class="detail-back-label" id="detail-back-label">Overview</span>
+  </div>
+  <div class="detail-hero">
+    <p class="detail-day"      id="detail-day-label"></p>
+    <h2 class="detail-title"   id="detail-title"></h2>
+    <p class="detail-subtitle" id="detail-subtitle"></p>
+    <div class="detail-divider"></div>
+  </div>
+  <div class="detail-card">
+    <div class="detail-card-inner" id="detail-card-inner"></div>
+  </div>
+</div>
+
+<!-- Floating Edit Button -->
+<button class="fab" id="fab" onclick="onFabClick()" title="Edit schedule">✏️</button>
+
+<!-- Save Bar -->
+<div class="save-bar" id="save-bar">
+  <span class="save-status" id="save-status"></span>
+  <button class="save-btn cancel"  onclick="cancelEdit()">Cancel</button>
+  <button class="save-btn confirm" onclick="saveChanges()">💾 Save Changes</button>
+</div>
+
+<!-- PIN Modal -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal">
+    <h3>🔒 Editor Access</h3>
+    <p>Enter your PIN to unlock edit mode</p>
+    <input class="pin-input" id="pin-input" type="password" maxlength="10"
+           placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()"/>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary"   onclick="checkPin()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   CONFIG  — update these values on GitHub
+══════════════════════════════════════════ */
+const CONFIG = {
+  n8nWebhook: "https://charitytab.app.n8n.cloud/webhook/convention-schedule",
+  webhookSecret: "maricopa-save-2026",
+  pinHash: "0572f0f48c9d4da7f59ccfff270df8a46297128f367248c5319ffe5b16e2f3ad"
+};
+
+/* ══════════════════════════════════════════
+   STRUCTURE
+══════════════════════════════════════════ */
+const DAYS = [
+  { label:"Thursday", date:"Aug 13", key:"aug13" },
+  { label:"Friday",   date:"Aug 14", key:"aug14" },
+  { label:"Saturday", date:"Aug 15", key:"aug15" },
+  { label:"Sunday",   date:"Aug 16", key:"aug16" },
+];
+
+const TOP_ROLES = ["Main Speaker","Song Leader","Spanish Translator","Song Service Translator"];
+const WEEK_ROLES = ["Main Speaker","Song Leader","Spanish Translator"];
+const SECTIONS = [
+  { key:"musicians", icon:"🎵", label:"Musicians",                 roles:["Piano","Organ","Bass","Synthesizer","Lead Guitar"] },
+  { key:"audio",     icon:"🎙️", label:"Audio Team",                roles:["Mixer","Floater"] },
+  { key:"video",     icon:"🎥", label:"Video Production & Stream", roles:["Video Mixer","Camera Operator","Stream Monitor","Lyrics","Translators Booth"] },
+  { key:"network",   icon:"📡", label:"Network",                   roles:["Tech Lead","Wireless","Printing"] },
+  { key:"translators", icon:"🌐", label:"Translators",             roles:["French Song Service","French Message"] },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let schedule         = {};      // live data from GitHub
+let editState        = {};      // working copy during edit
+let activeDay        = "aug13";
+let activeView       = "daily";
+let editMode         = false;
+let detailReturnView = "daily";
+let openSections     = {};
+let lastUpdated      = "";
+
+/* ══════════════════════════════════════════
+   FETCH SCHEDULE FROM GITHUB
+══════════════════════════════════════════ */
+async function loadSchedule() {
+  const url = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/schedule.json?t=${Date.now()}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("not found");
+    const data = await res.json();
+    schedule    = data.days;
+    lastUpdated = data.lastUpdated || "";
+  } catch(e) {
+    // fallback: empty schedule
+    schedule = {};
+    DAYS.forEach(d => {
+      schedule[d.key] = { morning:{}, evening:{} };
+    });
+    lastUpdated = "Not yet saved";
+  }
+  document.getElementById("loading-screen").classList.add("hidden");
+  renderTabs();
+  renderCards();
+  updateFooters();
+}
+
+function updateFooters() {
+  const txt = lastUpdated ? `Last updated: ${lastUpdated}` : "";
+  document.getElementById("footer-daily").textContent = txt;
+  document.getElementById("footer-week").textContent  = txt;
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function getSchedule() { return editMode ? editState : schedule; }
+
+function val(data, role) {
+  const v = data?.[role];
+  return (v && v.trim()) ? v.trim() : null;
+}
+
+function personCell(data, role, dayKey, session) {
+  const v = val(data, role);
+  if (editMode) {
+    return `<td><input class="edit-input" data-day="${dayKey}" data-session="${session}" data-role="${role}"
+              value="${v || ''}" placeholder="Assign…"/></td>`;
+  }
+  return `<td class="person-name${v?'':' tbd'}">${v || 'TBD'}</td>`;
+}
+
+function buildSections(data, dayKey, session, forDetail=false) {
+  return `<div class="sections-wrapper">
+    ${SECTIONS.map(sec => {
+      const sk     = `${dayKey}-${session}-${sec.key}`;
+      const isOpen = forDetail || !!openSections[sk];
+      const filled = sec.roles.filter(r => val(data, r)).length;
+      return `
+        <div class="section-header" onclick="${forDetail ? '' : 'toggleSection(\'' + sk + '\',this)'}">
+          <div class="section-header-left">
+            <span class="section-icon">${sec.icon}</span>
+            <span class="section-label">${sec.label}</span>
+            ${filled>0?`<span class="section-count">${filled}/${sec.roles.length}</span>`:''}
+          </div>
+          <span class="section-chevron${isOpen?' open':''}">▼</span>
+        </div>
+        <div class="section-body${isOpen?' open':''}">
+          <table class="role-table"><tbody>
+            ${sec.roles.map(r => `<tr>
+              <td class="role-name">${r}</td>
+              ${personCell(data, r, dayKey, session)}
+            </tr>`).join('')}
+          </tbody></table>
+        </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   CAPTURE EDITS BEFORE SWITCHING DAYS
+══════════════════════════════════════════ */
+function captureInputs() {
+  if (!editMode) return;
+  document.querySelectorAll('.edit-input').forEach(inp => {
+    const { day, session, role } = inp.dataset;
+    if (!editState[day])           editState[day] = { morning:{}, evening:{} };
+    if (!editState[day][session])  editState[day][session] = {};
+    editState[day][session][role]  = inp.value.trim();
+  });
+}
+
+/* ══════════════════════════════════════════
+   SECTION TOGGLE
+══════════════════════════════════════════ */
+function toggleSection(sk, headerEl) {
+  openSections[sk] = !openSections[sk];
+  headerEl.nextElementSibling.classList.toggle('open', !!openSections[sk]);
+  headerEl.querySelector('.section-chevron').classList.toggle('open', !!openSections[sk]);
+}
+
+/* ══════════════════════════════════════════
+   TABS
+══════════════════════════════════════════ */
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = DAYS.map(d => `
+    <button class="tab-btn${d.key===activeDay?' active':''}" onclick="switchDay('${d.key}')">
+      <div class="tab-day">${d.label}</div>
+      <div class="tab-date">${d.date}</div>
+    </button>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   DAILY CARDS
+══════════════════════════════════════════ */
+function renderCards() {
+  const src = getSchedule();
+  const data = src[activeDay] || { morning:{}, evening:{} };
+  const sessions = [
+    { type:"morning", label:"☀️ Morning", cls:"morning" },
+    { type:"evening", label:"🌙 Evening", cls:"evening" },
+  ];
+  document.getElementById("cards").innerHTML = sessions.map(({type,label,cls}) => `
+    <div class="card ${cls}">
+      <div class="card-top-header" onclick="${editMode ? '' : 'openDetail(\'' + activeDay + '\',\'' + type + '\')'}">
+        <div class="card-header-left">
+          <span class="badge ${cls}">${label}</span>
+          <span class="service-label">Service</span>
+        </div>
+        ${editMode ? '<span class="expand-hint" style="color:#93c5fd">Editing…</span>'
+                   : '<span class="expand-hint">Full view →</span>'}
+      </div>
+      <table class="role-table"><tbody>
+        ${TOP_ROLES.map(r => `<tr>
+          <td class="role-name">${r}</td>
+          ${personCell(data[type], r, activeDay, type)}
+        </tr>`).join('')}
+      </tbody></table>
+      ${buildSections(data[type], activeDay, type)}
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   WEEK VIEW
+══════════════════════════════════════════ */
+function renderWeek() {
+  const src = getSchedule();
+  document.getElementById("week-content").innerHTML = DAYS.map(day => {
+    const data = src[day.key] || { morning:{}, evening:{} };
+    const sessions = [
+      { type:"morning", label:"☀️ Morning", cls:"morning" },
+      { type:"evening", label:"🌙 Evening", cls:"evening" },
+    ];
+    return `
+      <div class="week-day-card">
+        <div class="week-day-header">
+          <span class="week-day-name">${day.label}</span>
+          <span class="week-day-date">${day.date}</span>
+        </div>
+        <table class="week-table">
+          <thead><tr><th>Session</th><th>Main Speaker</th><th>Song Leader</th><th>Translator</th><th></th></tr></thead>
+          <tbody>
+            ${sessions.map(({type,label,cls}) => {
+              const d = data[type] || {};
+              return `<tr onclick="openDetail('${day.key}','${type}')">
+                <td><span class="week-badge ${cls}">${label}</span></td>
+                ${WEEK_ROLES.map(r => {
+                  const v = val(d, r);
+                  return `<td class="week-person${v?'':' tbd'}">${v||'TBD'}</td>`;
+                }).join('')}
+                <td><span class="week-expand-hint">Full details →</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   VIEW TOGGLE
+══════════════════════════════════════════ */
+function setView(view) {
+  captureInputs();
+  activeView = view;
+  document.getElementById("btn-daily").classList.toggle("active", view==="daily");
+  document.getElementById("btn-week").classList.toggle("active",  view==="week");
+  document.getElementById("tabs").classList.toggle("hidden",          view==="week");
+  document.getElementById("daily-section").classList.toggle("hidden", view!=="daily");
+  document.getElementById("week-section").classList.toggle("hidden",  view!=="week");
+  if (view==="week") renderWeek();
+}
+
+/* ══════════════════════════════════════════
+   DETAIL VIEW
+══════════════════════════════════════════ */
+function openDetail(dayKey, session) {
+  if (editMode) return;
+  detailReturnView = activeView;
+  const day   = DAYS.find(d => d.key===dayKey);
+  const data  = (getSchedule()[dayKey] || {})[session] || {};
+  const label = session==="morning" ? "☀️ Morning Service" : "🌙 Evening Service";
+
+  document.getElementById("detail-day-label").textContent  = `${day.label} · ${day.date}`;
+  document.getElementById("detail-title").textContent      = label;
+  document.getElementById("detail-subtitle").textContent   = "Maricopa Valley Convention 2026";
+  document.getElementById("detail-back-label").textContent =
+    detailReturnView==="week" ? "Full Week" : `${day.label} Overview`;
+
+  const inner = document.getElementById("detail-card-inner");
+  inner.className = "detail-card-inner " + session;
+  inner.innerHTML = `
+    <table class="role-table"><tbody>
+      ${TOP_ROLES.map(r => {
+        const v = val(data, r);
+        return `<tr><td class="role-name">${r}</td><td class="person-name${v?'':' tbd'}">${v||'TBD'}</td></tr>`;
+      }).join('')}
+    </tbody></table>
+    ${buildSections(data, dayKey, session, true)}`;
+
+  document.getElementById("main-content").classList.add("hidden");
+  document.getElementById("detail-view").classList.add("visible");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function closeDetail() {
+  document.getElementById("detail-view").classList.remove("visible");
+  document.getElementById("main-content").classList.remove("hidden");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ══════════════════════════════════════════
+   DAY SWITCH
+══════════════════════════════════════════ */
+function switchDay(key) {
+  captureInputs();
+  activeDay = key;
+  renderTabs();
+  renderCards();
+}
+
+/* ══════════════════════════════════════════
+   PIN & EDIT MODE
+══════════════════════════════════════════ */
+function onFabClick() {
+  if (editMode) { cancelEdit(); return; }
+  openModal();
+}
+
+function openModal() {
+  document.getElementById("pin-input").value = "";
+  document.getElementById("pin-error").textContent = "";
+  document.getElementById("pin-input").classList.remove("error");
+  document.getElementById("pin-modal").classList.add("visible");
+  setTimeout(() => document.getElementById("pin-input").focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById("pin-modal").classList.remove("visible");
+}
+
+async function checkPin() {
+  const entered = document.getElementById("pin-input").value.trim();
+  const hash    = await sha256(entered);
+  if (hash !== CONFIG.pinHash) {
+    const inp = document.getElementById("pin-input");
+    inp.classList.add("error");
+    document.getElementById("pin-error").textContent = "Incorrect PIN. Please try again.";
+    setTimeout(() => inp.classList.remove("error"), 400);
+    return;
+  }
+  closeModal();
+  enterEditMode();
+}
+
+async function sha256(message) {
+  const msgBuffer  = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray  = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function enterEditMode() {
+  editMode  = true;
+  editState = JSON.parse(JSON.stringify(schedule));
+  document.getElementById("edit-banner").classList.add("visible");
+  document.getElementById("fab").classList.add("editing");
+  document.getElementById("fab").textContent = "✕";
+  document.getElementById("save-bar").classList.add("visible");
+  document.getElementById("save-status").textContent = "";
+  renderCards();
+}
+
+function cancelEdit() {
+  editMode  = false;
+  editState = {};
+  document.getElementById("edit-banner").classList.remove("visible");
+  document.getElementById("fab").classList.remove("editing");
+  document.getElementById("fab").textContent = "✏️";
+  document.getElementById("save-bar").classList.remove("visible");
+  renderCards();
+}
+
+/* ══════════════════════════════════════════
+   SAVE TO GITHUB
+══════════════════════════════════════════ */
+async function saveChanges() {
+  captureInputs();
+
+  const statusEl = document.getElementById("save-status");
+  statusEl.textContent = "Saving…";
+
+  try {
+    const now     = new Date();
+    const updated = now.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    const payload = { lastUpdated: updated, days: editState };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+    const res = await fetch(CONFIG.n8nWebhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret:      CONFIG.webhookSecret,
+        content:     content,
+        lastUpdated: updated,
+      }),
+    });
+
+    const result = await res.json();
+    if (!res.ok || !result.success) throw new Error(result.error || "Save failed");
+
+    // Update local state
+    schedule    = JSON.parse(JSON.stringify(editState));
+    lastUpdated = updated;
+    updateFooters();
+    cancelEdit();
+    statusEl.textContent = "";
+
+    // Success flash
+    const banner = document.getElementById("edit-banner");
+    banner.style.background = "#16a34a";
+    banner.textContent = "✅ Schedule saved successfully!";
+    banner.classList.add("visible");
+    setTimeout(() => {
+      banner.classList.remove("visible");
+      banner.style.background = "";
+      banner.textContent = "✏️ Edit Mode Active — make your changes then tap Save";
+    }, 2500);
+
+  } catch(err) {
+    statusEl.textContent = "⚠️ Save failed: " + err.message;
+    console.error(err);
+  }
+}
+
+/* ══════════════════════════════════════════
+   INIT
+════════════════════════════════
