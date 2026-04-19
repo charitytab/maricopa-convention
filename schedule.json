@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "April 18, 2026",
+  "lastUpdated": "April 19, 2026",
   "days": {
     "aug13": {
       "morning": {
@@ -23,7 +23,12 @@
         "Song Service Translator": "Yasser Castillo",
         "Translators Booth": "",
         "French Song Service": "",
-        "French Message": ""
+        "French Message": "",
+        "Head Deacon": "Jeff Loker",
+        "Head Usher": "",
+        "Ministers Deacon": "",
+        "Praises": "",
+        "Offering": "Angel M"
       },
       "evening": {
         "Main Speaker": "Peter Mayeur",
@@ -46,7 +51,12 @@
         "Song Service Translator": "",
         "Translators Booth": "",
         "French Song Service": "",
-        "French Message": ""
+        "French Message": "",
+        "Head Deacon": "",
+        "Head Usher": "",
+        "Ministers Deacon": "",
+        "Praises": "",
+        "Offering": ""
       }
     },
     "aug14": {
