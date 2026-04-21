@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "April 19, 2026",
+  "lastUpdated": "April 20, 2026",
   "days": {
     "aug13": {
       "morning": {
@@ -117,7 +117,7 @@
         "Bass": "",
         "Synthesizer": "",
         "Lead Guitar": "",
-        "Mixer": "",
+        "Mixer": "Peter Strunk",
         "Floater": "",
         "Video Mixer": "",
         "Camera Operator": "",
@@ -129,7 +129,12 @@
         "Song Service Translator": "",
         "Translators Booth": "",
         "French Song Service": "",
-        "French Message": ""
+        "French Message": "",
+        "Head Deacon": "",
+        "Head Usher": "",
+        "Ministers Deacon": "",
+        "Praises": "",
+        "Offering": ""
       },
       "evening": {
         "Main Speaker": "",
@@ -152,7 +157,12 @@
         "Song Service Translator": "",
         "Translators Booth": "",
         "French Song Service": "",
-        "French Message": ""
+        "French Message": "",
+        "Head Deacon": "",
+        "Head Usher": "",
+        "Ministers Deacon": "",
+        "Praises": "",
+        "Offering": ""
       }
     },
     "aug16": {
